@@ -104,6 +104,7 @@ public class AlterarSenha extends JFrame {
                             String codigo = gerarCodigo.gerarCodigo();
 
                             // Envia o e-mail para o usuário
+
                             boolean check = inserirCodigo.callEmailSender(getcampoEmail(), codigo);
 
                             if (check) {
