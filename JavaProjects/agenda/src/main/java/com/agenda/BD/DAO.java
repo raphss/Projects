@@ -16,13 +16,33 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
 import com.agenda.gerenciamento.AlterarContato;
 import com.agenda.gerenciamento.ExcluirContato;
 
+/**
+ * Data Access Object (DAO) para interação com o banco de dados da
+ * Agenda de Contatos.
+ * 
+ * Esta classe realiza operações relacionadas ao banco de dados,
+ * como listar contatos e gerar botões.
+ * 
+ * @author Raphael Vilete
+ * @version 2.0
+ */
+
 public class DAO {
+
+    /**
+     * Lista todos os contatos do banco de dados e gera botões para cada um.
+     * 
+     * @param painelContatos O JPanel para exibir os botões de contato.
+     * @throws SQLException Se ocorrer um erro ao interagir com o banco de dados.
+     */
 
     public void listaContatos(JPanel painelContatos) throws SQLException {
 
+        // Limpa e atualiza o painel de contatos
         painelContatos.revalidate();
         painelContatos.repaint();
 
@@ -32,10 +52,12 @@ public class DAO {
 
             conexao = new ConexaoBD().getConexao();
 
+            // Consulta SQL para obter informações sobre os contatos
             String sql = "SELECT NOME, TELEFONE, ENDERECO FROM AGENDA_CONTATOS ORDER BY NOME";
             PreparedStatement statement = conexao.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
 
+            // Itera sobre os resultados da consulta
             while (resultSet.next()) {
                 String nome = resultSet.getString("NOME");
                 String telefone = resultSet.getString("TELEFONE");
@@ -51,6 +73,15 @@ public class DAO {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Gera um botão para um contato específico e o adiciona ao JPanel fornecido.
+     * 
+     * @param painelContatos O JPanel para adicionar o botão de contato.
+     * @param nome           O nome do contato.
+     * @param telefone       O telefone do contato.
+     * @param endereco       O endereço do contato.
+     */
 
     public void gerarBotao(JPanel painelContatos, String nome, String telefone, String endereco) {
 
@@ -77,21 +108,28 @@ public class DAO {
                         null, opcoes, opcoes[2]);
 
                 if (infoEOpcao == 0) {
+                    // Abre a janela para alterar as informações do contato
                     new AlterarContato(painelContatos, nome, telefone, endereco);
                 }
 
                 if (infoEOpcao == 1) {
 
-                    int escolha = JOptionPane.showConfirmDialog(null, "Você tem certeza?", "",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    // Opções personalizadas para o diálogo de confirmação
+                    String[] simOuNao = { "Sim", "Não" };
+
+                    // Confirmação de exclusão
+                    int escolha = JOptionPane.showOptionDialog(null, "Você tem certeza?", "",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, simOuNao, simOuNao[1]);
 
                     if (escolha == JOptionPane.YES_NO_OPTION) {
+                        // Realiza a exclusão do contato selecionado
                         new ExcluirContato(painelContatos, nome, nomeBotao);
                     }
                 }
             }
         });
 
+        // Adiciona efeito de destaque ao passar o mouse sobre o botão
         nomeBotao.addMouseListener(new MouseListener() {
 
             @Override
@@ -124,6 +162,7 @@ public class DAO {
             }
         });
 
+        // Adiciona o botão ao painel de contatos
         painelContatos.add(nomeBotao);
     }
 }

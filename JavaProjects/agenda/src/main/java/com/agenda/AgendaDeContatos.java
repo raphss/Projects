@@ -21,12 +21,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
 import com.agenda.BD.DAO;
 import com.agenda.gerenciamento.AdicionarContato;
 import com.agenda.gerenciamento.PesquisarContato;
 
+/**
+ * Classe principal que representa a interface da Agenda de Contatos.
+ * Extende JFrame para criar a interface gráfica.
+ * 
+ * @author Raphael Vilete
+ * @version 2.0
+ */
+
 public class AgendaDeContatos extends JFrame {
 
+    // Componentes UI
     JLabel tituloLabel;
     JPanel painelAdicionar;
     JButton botaoAdicionar;
@@ -39,17 +49,24 @@ public class AgendaDeContatos extends JFrame {
     ImageIcon icone = new ImageIcon(getClass().getResource("/icone.png"));
     ImageIcon iconePesquisar = new ImageIcon(getClass().getResource("/searchIcon.png"));
 
+    // Objeto de acesso ao banco de dados
     DAO dao = new DAO();
+
+    /**
+     * Construtor da classe AgendaDeContatos.
+     * Configura a interface gráfica e inicializa os componentes.
+     */
 
     AgendaDeContatos() {
 
+        // Configurações do JFrame
         setTitle("Agenda de contatos");
         setIconImage(icone.getImage());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1300, 740);
         setLocationRelativeTo(null);
-        setLayout(new FlowLayout(FlowLayout.LEFT, 40, 50));
-        setMinimumSize(new Dimension(762, getHeight()));
+        setLayout(new FlowLayout(FlowLayout.LEFT, 50, 50));
+        setMinimumSize(new Dimension(1000, getHeight()));
 
         // Ajusta os componentes na tela de acordo com o tamanho da tela
         addComponentListener(new ComponentAdapter() {
@@ -64,11 +81,21 @@ public class AgendaDeContatos extends JFrame {
                 int novaLargura = getWidth();
 
                 if (novaAltura > altura && novaLargura > largura) {
-                    setLayout(new FlowLayout(FlowLayout.LEFT, 40, 150));
+                    setLayout(new FlowLayout(FlowLayout.LEFT, 80, 80));
+                    painelPesquisa.setPreferredSize(new Dimension(550, 55));
+                    painelPesquisa.setLayout(null);
+                    areaDePesquisa.setBounds(130, 0, 350, 55);
+                    botaoPesquisar.setBounds(490, 0, 50, 55);
+                    scroll.setPreferredSize(new Dimension(500, 670));
                 }
 
-                else if (altura <= 1300 || largura <= 740){
-                    setLayout(new FlowLayout(FlowLayout.LEFT, 40, 50));
+                else if (altura <= 1300 || largura <= 740) {
+                    setLayout(new FlowLayout(FlowLayout.LEFT, 50, 50));
+                    painelPesquisa.setPreferredSize(new Dimension(450, 55));
+                    painelPesquisa.setLayout(null);
+                    areaDePesquisa.setBounds(0, 0, 350, 55);
+                    botaoPesquisar.setBounds(360, 0, 50, 55);
+                    scroll.setPreferredSize(new Dimension(500, 500));
                 }
 
                 altura = novaAltura;
@@ -77,6 +104,7 @@ public class AgendaDeContatos extends JFrame {
             }
         });
 
+        // Inicialização e configuração dos componentes UI
         tituloLabel = new JLabel("Contatos");
         tituloLabel.setFont(new Font("Liberation Sans", Font.PLAIN, 45));
         tituloLabel.setForeground(Color.black);
@@ -87,29 +115,31 @@ public class AgendaDeContatos extends JFrame {
         scroll = new JScrollPane(painelContatos);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroll.setPreferredSize(new Dimension(400, 500));
+        scroll.setPreferredSize(new Dimension(500, 500));
 
         painelAdicionar = new JPanel();
         painelAdicionar.setPreferredSize(new Dimension(500, 55));
         painelAdicionar.setLayout(null);
 
-        botaoAdicionar = new JButton("Novo contato+");
+        botaoAdicionar = new JButton("Adicionar contato");
         botaoAdicionar.setFont(new Font("Liberation Sans", Font.PLAIN, 25));
         botaoAdicionar.setForeground(Color.black);
         botaoAdicionar.setFocusable(false);
-        botaoAdicionar.setBounds(0, 0, 200, 55);
+        botaoAdicionar.setBounds(30, 0, 240, 55);
         botaoAdicionar.setForeground(Color.black);
         botaoAdicionar.setContentAreaFilled(false);
-        botaoAdicionar.setBorderPainted(false);
+        botaoAdicionar.setBorderPainted(true);
         botaoAdicionar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         botaoAdicionar.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Abre a janela de adição de contato
                 new AdicionarContato(painelContatos);
             }
         });
 
+        // Adiciona efeito de destaque ao passar o mouse sobre o botão
         botaoAdicionar.addMouseListener(new MouseListener() {
 
             @Override
@@ -154,7 +184,7 @@ public class AgendaDeContatos extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Simula o clique no botão de pesquisa
+                // Simula o clique no botão de pesquisa ao pressionar a tecla "Enter"
                 botaoPesquisar.doClick();
             }
 
@@ -175,12 +205,14 @@ public class AgendaDeContatos extends JFrame {
 
                 String nomePesquisado = areaDePesquisa.getText();
 
+                // Lista todos os contatos correspondentes à pesquisa
                 if (!nomePesquisado.isEmpty()) {
                     new PesquisarContato(painelContatos, nomePesquisado);
                 }
 
                 else {
 
+                    // Lista todos os contatos novamente
                     try {
                         painelContatos.removeAll();
                         dao.listaContatos(painelContatos);
@@ -195,6 +227,7 @@ public class AgendaDeContatos extends JFrame {
 
         painelPesquisa.add(botaoPesquisar);
 
+        // Lista todos os contatos ao iniciar a aplicação
         try {
             dao.listaContatos(painelContatos);
 
@@ -202,6 +235,7 @@ public class AgendaDeContatos extends JFrame {
             e.printStackTrace();
         }
 
+        // Adiciona ao JFrame, os componentes criados
         add(tituloLabel);
         add(painelAdicionar);
         add(painelPesquisa);

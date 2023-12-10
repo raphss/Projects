@@ -16,12 +16,29 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
 import com.agenda.BD.ConexaoBD;
+
+/**
+ * Esta classe gerencia a pesquisa de contatos na agenda.
+ * Permite pesquisar um contato em específico.
+ * 
+ * @author Raphael Vilete
+ * @version 2.0
+ */
 
 public class PesquisarContato {
 
+    /**
+     * Construtor da classe PesquisarContato.
+     * 
+     * @param painelContatos O painel que contém a lista de contatos.
+     * @param nomePesquisado O nome do contato a ser pesquisado.
+     */
+
     public PesquisarContato(JPanel painelContatos, String nomePesquisado) {
 
+        // Limpa e atualiza o painel de contatos
         painelContatos.revalidate();
         painelContatos.repaint();
 
@@ -31,6 +48,7 @@ public class PesquisarContato {
 
             conexao = new ConexaoBD().getConexao();
 
+            // Consulta SQL para obter informações sobre o contato pesquisado
             String sql = "SELECT NOME, TELEFONE, ENDERECO FROM AGENDA_CONTATOS WHERE LOWER(NOME) LIKE '%"
                     + nomePesquisado.toLowerCase() + "%' ORDER BY NOME";
             PreparedStatement statement = conexao.prepareStatement(sql);
@@ -39,6 +57,7 @@ public class PesquisarContato {
             conexao.commit();
             painelContatos.removeAll();
 
+            // Itera sobre os resultados da consulta
             while (resultSet.next()) {
                 String nome = resultSet.getString("NOME");
                 String telefone = resultSet.getString("TELEFONE");
@@ -53,6 +72,15 @@ public class PesquisarContato {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Gera um botão com informações sobre o contato.
+     * 
+     * @param painelContatos O painel que contém a lista de contatos.
+     * @param nome           O nome do contato.
+     * @param telefone       O telefone do contato.
+     * @param endereco       O endereço do contato.
+     */
 
     public void gerarBotao(JPanel painelContatos, String nome, String telefone, String endereco) {
 
@@ -79,21 +107,28 @@ public class PesquisarContato {
                         null, opcoes, opcoes[2]);
 
                 if (infoEOpcao == 0) {
+                    // Abre a janela para alterar as informações do contato
                     new AlterarContato(painelContatos, nome, telefone, endereco);
                 }
 
                 if (infoEOpcao == 1) {
 
-                    int escolha = JOptionPane.showConfirmDialog(null, "Você tem certeza?", "",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    // Opções personalizadas para o diálogo de confirmação
+                    String[] simOuNao = { "Sim", "Não" };
+
+                    // Confirmação de exclusão
+                    int escolha = JOptionPane.showOptionDialog(null, "Você tem certeza?", "",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, simOuNao, simOuNao[1]);
 
                     if (escolha == JOptionPane.YES_NO_OPTION) {
+                        // Realiza a exclusão do contato selecionado
                         new ExcluirContato(painelContatos, nome, nomeBotao);
                     }
                 }
             }
         });
 
+        // Adiciona efeito de destaque ao passar o mouse sobre o botão
         nomeBotao.addMouseListener(new MouseListener() {
 
             @Override
@@ -126,6 +161,7 @@ public class PesquisarContato {
             }
         });
 
+        // Adiciona o botão ao painel de contatos
         painelContatos.add(nomeBotao);
     }
 }
