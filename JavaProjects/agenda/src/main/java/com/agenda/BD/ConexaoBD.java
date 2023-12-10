@@ -1,5 +1,6 @@
 package com.agenda.BD;
 
+// import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -31,8 +32,17 @@ public class ConexaoBD {
         try {
 
             String dbNome = "agendaDeContatos";
-            //String dbUrl = "jdbc:h2:./" + dbNome; // para o arquivo .jar
+
             String dbUrl = "jdbc:h2:./JavaProjects/agenda/src/main/resources/" + dbNome; // Para executar pela ide
+
+            /*
+             * Para executar pelo .jar
+             * 
+             * String caminhoDocumentos = System.getProperty("user.home") + "\\Documents";
+             * String caminhoBancoDados = Paths.get(caminhoDocumentos, "Agenda de Contatos",
+             * dbNome).toString();
+             * String dbUrl = "jdbc:h2:" + caminhoBancoDados;
+             */
 
             // Estabelece uma conexão com o banco de dados usando a URL, nome de usuário e
             // senha especificados

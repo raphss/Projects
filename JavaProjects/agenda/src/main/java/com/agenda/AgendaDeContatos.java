@@ -86,7 +86,6 @@ public class AgendaDeContatos extends JFrame {
                     painelPesquisa.setLayout(null);
                     areaDePesquisa.setBounds(130, 0, 350, 55);
                     botaoPesquisar.setBounds(490, 0, 50, 55);
-                    scroll.setPreferredSize(new Dimension(500, 670));
                 }
 
                 else if (altura <= 1300 || largura <= 740) {
@@ -95,7 +94,6 @@ public class AgendaDeContatos extends JFrame {
                     painelPesquisa.setLayout(null);
                     areaDePesquisa.setBounds(0, 0, 350, 55);
                     botaoPesquisar.setBounds(360, 0, 50, 55);
-                    scroll.setPreferredSize(new Dimension(500, 500));
                 }
 
                 altura = novaAltura;
